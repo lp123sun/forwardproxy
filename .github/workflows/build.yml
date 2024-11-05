@@ -10,9 +10,18 @@ defaults:
     shell: bash
 jobs:
   build_caddy_with_naive:
+    strategy:
+      matrix:
+        target_os: [linux]
+        target_arch: [amd64, arm64]
     runs-on: ubuntu-22.04
     env:
-      BUNDLE: caddy-forwardproxy-naive
+      GOOS: ${{ matrix.target_os }}
+      GOARCH: ${{ matrix.target_arch }}
+      # GOAMD64: v3
+      CADDY_VERSION: ${{ github.event.inputs.version }}
+      FORWARDPROXY: ${{ github.event.inputs.forwardproxy }}
+      BUNDLE: caddy-forwardproxy-naive-${{ matrix.target_os }}-${{ matrix.target_arch }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
